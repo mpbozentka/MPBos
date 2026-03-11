@@ -15,11 +15,11 @@ function setCache(key, value) {
     cache[key] = { value, time: Date.now() };
 }
 
-async function getBitcoinPrice() {
+async function getBitcoinPrice(ctx = null) {
     const cached = getCached('btc');
     if (cached) return cached;
     console.log("Olivia: Starting Gemini call...");
-    if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
+    if (ctx) if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
     try {
         const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', { timeout: 5000 });
         if (response.data && response.data.bitcoin) {
@@ -31,11 +31,11 @@ async function getBitcoinPrice() {
     } catch (e) { return 'Price unavailable'; }
 }
 
-async function getWeather(zip = '78732') {
+async function getWeather(zip = '78732', ctx = null) {
     const cached = getCached('weather_' + zip);
     if (cached) return cached;
     console.log("Olivia: Starting Gemini call...");
-    if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
+    if (ctx) if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
     try {
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=30.37&longitude=-97.90&current_weather=true&temperature_unit=fahrenheit';
         const response = await axios.get(url, { timeout: 5000 });
@@ -49,7 +49,7 @@ async function getWeather(zip = '78732') {
 
 async function getAINews() {
     console.log("Olivia: Starting Gemini call...");
-    if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
+    if (ctx) if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
     try {
         const rssUrl = 'https://hnrss.org/frontpage?q=AI';
         const response = await axios.get(rssUrl, { timeout: 10000 });
@@ -61,9 +61,9 @@ async function getAINews() {
     } catch (e) { return 'News unavailable'; }
 }
 
-async function performResearch(topic) {
+async function performResearch(topic, ctx = null) {
     console.log("Olivia: Starting Gemini call...");
-    if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
+    if (ctx) if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
     try {
         const prompt = 'Research this for Mitchell: ' + topic;
         const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash', tools: [{ googleSearch: {} }] });
@@ -73,14 +73,14 @@ async function performResearch(topic) {
 }
 
 async function fetchSnapshot(zip = '78732') {
-    const [btc, weather, news] = await Promise.all([getBitcoinPrice(), getWeather(zip), getAINews()]);
+    const [btc, weather, news] = await Promise.all([getBitcoinPrice(ctx = null), getWeather(zip), getAINews()]);
     return { btc, weather, news };
 }
 
 async function draftEmail(message, ctx = null) {
     const prompt = "You are Olivia, the Email Specialist for Mitchell, a PGA Professional. User Instruction: " + message + " Mitchell PGA Email: " + (process.env.PGA_EMAIL || '') + " TASK: 1. Extract recipient email. 2. Write subject. 3. Draft body. RETURN ONLY JSON: { \"to\": \"...\", \"subject\": \"...\", \"body\": \"...\" }";
     console.log("Olivia: Starting Gemini call...");
-    if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
+    if (ctx) if (ctx) ctx.reply("🤔 Thinking of the perfect draft...");
     try {
         const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
         const result = await model.generateContent(prompt);

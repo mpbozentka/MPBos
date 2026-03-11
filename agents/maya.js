@@ -56,6 +56,7 @@ async function getDoc() {
     }
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID, serviceAccountAuth);
     await doc.loadInfo();
+    console.log('📊 Sheets found:', doc.sheetsByIndex.map(s => s.title));
     cachedDoc = doc;
     docLoadedAt = now;
     return doc;
@@ -70,7 +71,8 @@ function invalidateCache() {
 async function addMultipleGroceries(items, addedBy) {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['🛒 Grocery List'];
+        console.log('📊 Sheets found:', doc.sheetsByIndex.map(s => s.title));
+        const sheet = doc.sheetsByIndex[3];
         const rows = items.map(item => ({
             item: item.trim(),
             added_by: addedBy,
@@ -89,7 +91,7 @@ async function addMultipleGroceries(items, addedBy) {
 async function addGrocery(item, addedBy) {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['🛒 Grocery List'];
+        const sheet = doc.sheetsByIndex[3];
         await sheet.addRow({
             item: item,
             added_by: addedBy,
@@ -98,13 +100,13 @@ async function addGrocery(item, addedBy) {
         });
         invalidateCache();
         return true;
-    } catch (e) { return false; }
+    } catch (e) { console.error('❌ Maya addGolfStudent error:', e.message); return false; }
 }
 
 async function removeGrocery(item) {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['🛒 Grocery List'];
+        const sheet = doc.sheetsByIndex[3];
         const rows = await sheet.getRows();
 
         const candidates = rows.map(r => r.get('item') || '');
@@ -126,7 +128,7 @@ async function removeGrocery(item) {
 async function addPersonalTask(task, source, priority = 'Medium') {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['🙋 Personal To-Do'];
+        const sheet = doc.sheetsByIndex[3];
         await sheet.addRow({
             task: task,
             source: source,
@@ -135,13 +137,13 @@ async function addPersonalTask(task, source, priority = 'Medium') {
         });
         invalidateCache();
         return true;
-    } catch (e) { return false; }
+    } catch (e) { console.error('❌ Maya addGolfStudent error:', e.message); return false; }
 }
 
 async function removePersonalTask(task) {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['🙋 Personal To-Do'];
+        const sheet = doc.sheetsByIndex[3];
         const rows = await sheet.getRows();
 
         const candidates = rows.map(r => r.get('task') || '');
@@ -163,7 +165,7 @@ async function removePersonalTask(task) {
 async function addProfessionalTask(task, source, priority = 'Medium') {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['💼 Professional To-Do'];
+        const sheet = doc.sheetsByIndex[3];
         await sheet.addRow({
             task: task,
             source: source,
@@ -172,13 +174,13 @@ async function addProfessionalTask(task, source, priority = 'Medium') {
         });
         invalidateCache();
         return true;
-    } catch (e) { return false; }
+    } catch (e) { console.error('❌ Maya addGolfStudent error:', e.message); return false; }
 }
 
 async function removeProfessionalTask(task) {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['💼 Professional To-Do'];
+        const sheet = doc.sheetsByIndex[3];
         const rows = await sheet.getRows();
 
         const candidates = rows.map(r => r.get('task') || '');
@@ -219,9 +221,10 @@ async function getProfessionalTasks() {
 }
 
 async function addGolfStudent(details) {
+    console.log('Maya: Adding student profile with:', JSON.stringify(details));
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['🏌️♂️ Golf Students'];
+        const sheet = doc.sheetsByIndex[3];
         await sheet.addRow({
             name: details.name,
             details: details.details,
@@ -229,13 +232,13 @@ async function addGolfStudent(details) {
         });
         invalidateCache();
         return true;
-    } catch (e) { return false; }
+    } catch (e) { console.error('❌ Maya addGolfStudent error:', e.message); return false; }
 }
 
 async function getStudentProfile(name) {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['🏌️♂️ Golf Students'];
+        const sheet = doc.sheetsByIndex[3];
         const rows = await sheet.getRows();
         
         const target = name.toLowerCase().trim();
@@ -254,7 +257,7 @@ async function getStudentProfile(name) {
 async function addLessonLog(log) {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['📝 Lesson Logs'];
+        const sheet = doc.sheetsByIndex.find(s => s.title.includes('Lesson'));
         await sheet.addRow({
             student_name: log.studentName,
             date: log.date,
@@ -262,13 +265,13 @@ async function addLessonLog(log) {
         });
         invalidateCache();
         return true;
-    } catch (e) { return false; }
+    } catch (e) { console.error('❌ Maya addGolfStudent error:', e.message); return false; }
 }
 
 async function getLessonLogs(studentName) {
     try {
         const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['📝 Lesson Logs'];
+        const sheet = doc.sheetsByIndex.find(s => s.title.includes('Lesson'));
         const rows = await sheet.getRows();
         const target = studentName.toLowerCase().trim();
         

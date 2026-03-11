@@ -74,6 +74,7 @@ async function updateEvent(calendarId, eventId, updates) {
 }
 
 async function fetchIcalEvents() {
+    console.log("🗓️  Fetching iCal URLs:", icalUrls.length);
     const events = [];
     const now = new Date();
     for (let url of icalUrls) {
@@ -85,6 +86,8 @@ async function fetchIcalEvents() {
 
             const response = await axios.get(url, { timeout: 10000 });
             const data = ical.parseICS(response.data);
+            const count = Object.keys(data).length;
+            console.log("✅ Fetched iCal from " + url + ". Found " + count + " raw items.");
 
             for (let k in data) {
                 if (data.hasOwnProperty(k)) {

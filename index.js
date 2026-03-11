@@ -32,6 +32,7 @@ function deleteDraft(userId) {
 console.log("🚀 AI Elite Team is online (Telegraf)...");
 
 bot.on(['text', 'voice'], async (ctx) => {
+    console.log("📩 New message from " + (ctx.from.username || ctx.from.id));
     const message = ctx.message.text || ctx.message.voice?.text;
     if (!message) return;
     console.log('📩 Message from ' + (ctx.from.username || ctx.from.id));
@@ -58,7 +59,7 @@ bot.on(['text', 'voice'], async (ctx) => {
             });
             return;
         }
-        await rex.routeMessage(ctx);
+        await rex.routeMessage(ctx, classification);
     } catch (e) {
         console.error('Bot Error:', e.message);
         ctx.reply('⚠️ Error: ' + e.message).catch(() => {});
